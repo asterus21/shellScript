@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# TODO: ./helpCompile with any token (except for a whitespace) calls a list of commands
+# TODO: ./helpCompile --help or -h calls a list of commands
+# TODO: ./helpCompile 32454 compiles an entered build manual
+# TODO: ./helpCompile --list or -ls shows a list of builds
+# TODO: ./helpCompile --path or -p changes the pathLicense value (only absolute paths are allowed, otherwise a warning occures) (mind the use of slashes)
+# TODO: ./helpCompile --data or -d changes both of the dataSourceWin and dataSource values (only absolute paths are allowed, otherwise a warning occures) (mind the use of slashes) (see the slashes change)
+# TODO: ./helpCompile --script or -s changes the helpScript value only absolute paths are allowed, otherwise a warning occures (mind the use of slashes)
+
 ######### the list of the constant values #########
 
 # path to the 'comlicbits.h' file
