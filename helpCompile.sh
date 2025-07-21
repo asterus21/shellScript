@@ -2,9 +2,16 @@
 
 ######### the list of the constant values #########
 
+# path to the 'comlicbits.h' file
 declare pathLisence=D:\\pa_config\\comlicbits.h
+
+# path to the build file for the script
 declare dataSourceWin=C:\\pa6autotests\\Builds
+
+# path to the build file for the command line
 declare dataSource=/c/pa6autotests/Builds
+
+# path to the main script file
 declare helpScript=D:\\gitbash\\help\\testBuild.cmd
 
 # you may change the variable values according to your needs
@@ -102,10 +109,14 @@ fi
 # although the original build.cmd is not used, PDF files are not copied
 # that's why we need to cut them before the script starts and insert afterwards
 
+# path to the nodejs to compile the User Manual with the TM API specification
+nodeJS="${buildPath}\\Bin64\\nodejs"
+
 mv "${buildPath}\\SourceData\\www\\help\\pdf" "${buildPath}\\SourceData\\www"
 
 export SOURCEDATA=${buildPath}\\SourceData
 export COMLICBITSPATH=${pathLisence}
+export MISHARED=${nodeJS}
 
 $helpScript
 
