@@ -1,34 +1,28 @@
 #!/bin/bash
 shopt -s extglob
 
-# TODO: ./helpCompile and any other token will call the lis of possible arguments
 # TODO: ./helpCompile --path or -p changes the pathLicense value (only absolute paths are allowed, otherwise a warning occures) (mind the use of slashes)
 # TODO: ./helpCompile --data or -d changes both of the dataSourceWin and dataSource values (only absolute paths are allowed, otherwise a warning occures) (mind the use of slashes) (see the slashes change)
 # TODO: ./helpCompile --script or -s changes the helpScript value only absolute paths are allowed, otherwise a warning occures (mind the use of slashes)
 
-######### the list of the constant values #########
+######### the list of the constants #########
 
-# path to the 'comlicbits.h' file
-declare pathLisence=D:\\pa_config\\comlicbits.h
+# path to the license file
+declare pathLicense=D:\\pa_config\\comlicbits.h
 
-# path to the build file for the script
+# path to the Build folder for the script
 declare dataSourceWin=C:\\pa6autotests\\Builds
 
-# path to the build file for the command line
-declare dataSource=/c/pa6autotests/Builds
+# path to the Build folder for the Comand Line Interface
+declare dataSource=C:\\pa6autotests\\Builds
 
-# path to the main script file
+# path to the Main script file
 declare helpScript=D:\\gitbash\\help\\testBuild.cmd
 
-# you may change the variable values according to your needs
-# the build.cmd is not used
-# as it does not copy any PDF files
+######### the functions in use #########
 
-######### the list of the functions #########
-
-# print the current time and the following string
 print() {
-  printf '%(%Y/%m/%d %H:%M:%S)T ' # current time
+  printf '%(%Y/%m/%d %H:%M:%S)T '
   echo "$1"
 }
 
@@ -52,22 +46,76 @@ askSure() {
 
 helpArguments() {
   print "Here is a list of arguments:"
-  print "Add --help or -h to show this list of commands."
+  print "Add --help or -h to show this list of arguments."
   print "Add --list or -l to show a list of builds."
-  print "Add a build number, e.g. 32534 to start the script User's Manual"
-  print "Add --path or -p to change the licence path (only absolute paths are allowed)"
-  print "Add --data or -d to change the server path (only absolute paths are allowed)"
-  print "Add --script or -s to change the main script path (only absolute paths are allowed)"
+  print "Add a build number, e.g. 32534 to start the main script."
+  print "Add --path or -p to change the licence path (only absolute paths are allowed)."
+  print "Add --data or -d to change the server path (only absolute paths are allowed)."
+  print "Add --script or -s to change the main script path (only absolute paths are allowed)."
 }
 
 listBuilds() {
-  for entry in "$dataSource"/*
-  do  
-    print "$entry"
+
+  local winBase
+  winBase="${dataSourceWin%\\}"
+
+  for entry in "$dataSource"/*; do
+    local buildName
+    buildName=$(basename "$entry")
+    print "${winBase}\\${buildName}"
   done
+
 }
 
-##### the main script is given in a separate function #####
+##### the script is given in a separate function #####
+
+enteredBuild() {
+
+  buildPath="${dataSourceWin}\\$1"
+  commonCode "$buildPath"
+
+}
+
+commonCode() {
+
+  local buildPath="$1"
+  print "The build folder path: $buildPath"
+
+  if [ ! -d "$buildPath" ]; then
+      print "The build folder does not exist."
+      printExit
+      exit 1
+  fi
+
+  if [ -z "$( ls -A "$buildPath" )" ]; then
+    print "Check whether the build folder is empty..."
+    print "The build folder is empty."
+    print "The program is about to exit..."
+    printExit
+    exit 0
+  else
+    print "Check whether the build folder is empty..."
+    print "Note that the script execution can take several minutes."
+    print "The script is about to start..."
+    askSure
+    echo ""
+  fi  
+
+  # path to the nodejs to compile the User Manual with the TM API specification
+  nodeJS="$buildPath\\Bin64\\nodejs"
+
+  # although the original build.cmd is not used, PDF files are still not copied
+  # that's why we need to cut them before the script starts and insert afterwards
+  mv "$buildPath\\SourceData\\www\\help\\pdf" "$buildPath\\SourceData\\www"
+
+  export SOURCEDATA=$buildPath\\SourceData
+  export COMLICBITSPATH=${pathLicense}
+  export MISHARED=${nodeJS}
+
+  $helpScript
+
+  mv "$buildPath\\SourceData\\www\\pdf" "$buildPath\\SourceData\\www\\help"
+}
 
 mainScript() {
   print "Starting the script..."
@@ -82,121 +130,44 @@ mainScript() {
   read -r buildNumber
 
   case "$buildNumber" in
-    "ext"  ) printExit && exit 1;;
-    "exit" ) printExit && exit 1;;
-    "Exit" ) printExit && exit 1;;
-    "EXIT" ) printExit && exit 1;;
-    "учш"  ) printExit && exit 1;;
-    "учше" ) printExit && exit 1;;
-    "Учше" ) printExit && exit 1;;
-    "УЧШЕ" ) printExit && exit 1;;
+    "ext"  ) printExit && exit 0;;
+    "exit" ) printExit && exit 0;;
+    "Exit" ) printExit && exit 0;;
+    "EXIT" ) printExit && exit 0;;
+    "учш"  ) printExit && exit 0;;
+    "учше" ) printExit && exit 0;;
+    "Учше" ) printExit && exit 0;;
+    "УЧШЕ" ) printExit && exit 0;;
   esac
 
   buildPath="${dataSourceWin}\\${buildNumber}"
-
-  print "The build folder path: ${buildPath}"
-
-  if [ -d "$buildPath" ]; then
-    print "Check whether the build folder exists..."
-      build=$buildPath
-      
-    else
-      print "The build folder does not exist."
-      printExit
-      exit 1
-  fi
-
-  if [ -z "$( ls -A "$build" )" ]; then
-    print "Check whether the build folder is empty..."
-    print "The build folder is empty."
-    print "The program is about to exit..."
-    printExit
-    exit 0
-  else
-    print "Check whether the build folder is empty..."
-    print "Note that the script can take several minutes."
-    print "The script is about to start..."
-    askSure
-    echo ""
-  fi
-
-  # although the original build.cmd is not used, PDF files are not copied
-  # that's why we need to cut them before the script starts and insert afterwards
-
-  # path to the nodejs to compile the User Manual with the TM API specification
-  nodeJS="${buildPath}\\Bin64\\nodejs"
-
-  mv "${buildPath}\\SourceData\\www\\help\\pdf" "${buildPath}\\SourceData\\www"
-
-  export SOURCEDATA=${buildPath}\\SourceData
-  export COMLICBITSPATH=${pathLisence}
-  export MISHARED=${nodeJS}
-
-  $helpScript
-
-  mv "${buildPath}\\SourceData\\www\\pdf" "${buildPath}\\SourceData\\www\\help"
+  commonCode "$buildPath"
 
 }
-
-enteredBuild() {
-  
-  buildPath="${dataSourceWin}\\$1"
-
-  print "The build folder path: ${buildPath}"
-
-  if [ -d "$buildPath" ]; then
-    print "Check whether the build folder exists..."
-      build=$buildPath
-      
-    else
-      print "The build folder does not exist."
-      printExit
-      exit 1
-  fi
-
-  if [ -z "$( ls -A "$build" )" ]; then
-    print "Check whether the build folder is empty..."
-    print "The build folder is empty."
-    print "The program is about to exit..."
-    printExit
-    exit 0
-  else
-    print "Check whether the build folder is empty..."
-    print "Note that the script can take several minutes."
-    print "The script is about to start..."
-    askSure
-    echo ""
-  fi
-
-  # although the original build.cmd is not used, PDF files are not copied
-  # that's why we need to cut them before the script starts and insert afterwards
-
-  # path to the nodejs to compile the User Manual with the TM API specification
-  nodeJS="${buildPath}\\Bin64\\nodejs"
-
-  mv "${buildPath}\\SourceData\\www\\help\\pdf" "${buildPath}\\SourceData\\www"
-
-  export SOURCEDATA=${buildPath}\\SourceData
-  export COMLICBITSPATH=${pathLisence}
-  export MISHARED=${nodeJS}
-
-  $helpScript
-
-  mv "${buildPath}\\SourceData\\www\\pdf" "${buildPath}\\SourceData\\www\\help"
-}
-
-builds=()
-
-for entry in "$dataSource"/*
-  do
-    builds+=("$entry")
-  done
 
 ######### the input check #########
 
-case "$@" in
-    "" ) mainScript;;
-    "-h" | "--help" ) helpArguments && printExit && exit 1;;
-    "-l" | "--list" ) print "Here is a list of builds:" && listBuilds && printExit && exit 1;;
-    +([0-9]) ) enteredBuild "$@";;
+case "$1" in
+    "" | " " )
+        mainScript ;;
+    "-l" | "--list" )
+        print "Here is a list of builds:"
+        listBuilds
+        print "Use --help or -h to show a list of arguments."
+        printExit
+        exit 0 ;;
+    "-h" | "--help" )
+        helpArguments
+        printExit
+        exit 0 ;;
+    *[a-zA-Z]* )
+        helpArguments
+        printExit
+        exit 1 ;;
+    *[!0-9]* )
+        helpArguments
+        printExit
+        exit 1 ;;
+    * )
+        enteredBuild "$@" ;;
 esac
