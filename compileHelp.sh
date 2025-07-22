@@ -1,9 +1,7 @@
 #!/bin/bash
 shopt -s extglob
 
-# TODO: ./helpCompile --help or -h calls a list of commands
-# TODO: ./helpCompile 32454 compiles an entered build manual
-# TODO: ./helpCompile --list or -ls shows a list of builds
+# TODO: ./helpCompile and any other token will call the lis of possible arguments
 # TODO: ./helpCompile --path or -p changes the pathLicense value (only absolute paths are allowed, otherwise a warning occures) (mind the use of slashes)
 # TODO: ./helpCompile --data or -d changes both of the dataSourceWin and dataSource values (only absolute paths are allowed, otherwise a warning occures) (mind the use of slashes) (see the slashes change)
 # TODO: ./helpCompile --script or -s changes the helpScript value only absolute paths are allowed, otherwise a warning occures (mind the use of slashes)
@@ -54,13 +52,12 @@ askSure() {
 
 helpArguments() {
   print "Here is a list of arguments:"
-  print "Add --exit or -e to exit."
   print "Add --help or -h to show this list of commands."
   print "Add --list or -l to show a list of builds."
   print "Add a build number, e.g. 32534 to start the script User's Manual"
   print "Add --path or -p to change the licence path (only absolute paths are allowed)"
   print "Add --data or -d to change the server path (only absolute paths are allowed)"
-  print "Add --script or -s to change the compile script path (only absolute paths are allowed)"
+  print "Add --script or -s to change the main script path (only absolute paths are allowed)"
 }
 
 listBuilds() {
