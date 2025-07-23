@@ -1,10 +1,6 @@
 #!/bin/bash
 shopt -s extglob
 
-# TODO: ./helpCompile --path or -p changes the default_path_to_license_file value (only absolute paths are allowed, otherwise a warning occures)
-# TODO: ./helpCompile --data or -d changes the default_path_to_build value (only absolute paths are allowed, otherwise a warning occures)
-# TODO: ./helpCompile --script or -s changes the default_path_to_main_script value (only absolute paths are allowed, otherwise a warning occures)
-
 ######### the list of the constants #########
 
 # path to the license file
@@ -49,9 +45,9 @@ show_arguments() {
   print "Add --help or -h to show this list of arguments."
   print "Add --list or -l to show a list of builds."
   print "Add a build number, e.g. 32534 to start the script."
-  print "Add --path or -p to change the licence path (only absolute paths are allowed)."
-  print "Add --data or -d to change the server path (only absolute paths are allowed)."
-  print "Add --script or -s to change the path to the main script (only absolute paths are allowed)."
+  print "Add --path or -p to change the licence path (only absolute paths are allowed, e.g. 'C:\my_license_folder\my_license.h')."
+  print "Add --build or -b to change the server path (only absolute paths are allowed, e.g. 'C:\my_build_folder\my_build')."
+  print "Add --script or -s to change the path to the main script (only absolute paths are allowed, e.g. 'C:\my_script_folder\my_script.cmd')."
 }
 
 # function to show a list of builds
@@ -63,12 +59,45 @@ show_builds() {
   done
 }
 
+# function to check whether a path is absolute
+is_absolute() {
+  if [[ "$1" =~ ^[a-zA-Z]:\\ ]]; then
+    return 0
+  else
+    print "Please, use an absolute path, e.g. C:\\my_folder"
+    exit 1
+  fi
+}
+
+# function to change default values
+change_default_values() {
+  local path_to_change=$1
+  local new_path=$2
+
+  is_absolute "$new_path"
+
+  case "$path_to_change" in
+    "license" )
+      default_path_to_license_file="$new_path"
+      print "License path changed to $new_path"
+      ;;
+    "build"   )
+      default_path_to_build="$new_path"
+      print "Build path changed to $new_path"
+      ;;
+    "script"  )
+      default_path_to_main_script="$new_path"
+      print "Script path changed to $new_path"
+      ;;
+  esac
+}
+
 # function to check paths
 check_paths() {
   build_path="$1"
   print "The build folder path: $build_path"
 
-  if [ ! -d "$build_path" ]; then
+  if [ ! -b "$build_path" ]; then
       print "The build folder does not exist."
       print_exit
       exit 1
@@ -90,13 +119,14 @@ check_paths() {
 
   # path to the nodejs to compile the User Manual with the API specification
   node_js_path="$build_path\\Bin64\\nodejs"
-  if [ ! -d "$node_js_path" ]; then
+  if [ ! -b "$node_js_path" ]; then
       print "The NodeJS folder is not found."
       print_exit
       exit 1
   fi
 }
 
+# function to start the script without a number
 start_script_without_build_number() {
   print "Starting the script..."
   print "Getting a list of folders..."
@@ -141,6 +171,7 @@ start_script_without_build_number() {
   start_main_script
 }
 
+# function to start the script with a specified number
 start_script_with_build_number() {
   build_path="${default_path_to_build}\\$1"
   check_paths "$build_path"
@@ -149,6 +180,7 @@ start_script_with_build_number() {
 
 ##### the main script #####
 
+# function to start the main script
 start_main_script() {
   # PDF files are not copied, that's why we need to cut them before the script starts and insert afterwards
   mv "$build_path\\SourceData\\www\\help\\pdf" "$build_path\\SourceData\\www"
@@ -167,27 +199,56 @@ start_main_script() {
 
 ######### the scripts calls #########
 
-case "$1" in
-    "" | " " )
-      start_script_without_build_number ;;
-    "-l" | "--list" )
-      print "Here is a list of builds:"
-      show_builds
-      print "Use --help or -h to show a list of arguments."
-      print_exit
-      exit 0 ;;
-    "-h" | "--help" )
-      show_arguments
-      print_exit
-      exit 0 ;;
-    *[a-zA-Z]* )
-      show_arguments
-      print_exit
-      exit 1 ;;
-    *[!0-9]* )
-      show_arguments
-      print_exit
-      exit 1 ;;
-    * )
-      start_script_with_build_number "$@" ;;
-esac
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+      "-p" | "--path"   )
+        if [ -z "$2" ]; then
+          print "Error: no path is specified"
+          print_exit
+          exit 1
+        fi
+        change_default_values "license" "$2"
+        shift 2
+        ;;
+      "-b" | "--build"  )
+        if [ -z "$2" ]; then
+          print "Error: no path is specified"
+          print_exit
+          exit 1
+        fi
+        change_default_values "build" "$2"
+        shift 2
+        ;;
+      "-s" | "--script" )
+        if [ -z "$2" ]; then
+          print "Error: no path is specified"
+          print_exit
+          exit 1
+        fi
+        change_default_values "script" "$2"
+        shift 2
+        ;;
+      "-l" | "--list"   )
+        print "Here is a list of builds:"
+        show_builds
+        print "Use --help or -h to show a list of arguments."
+        print_exit
+        exit 0 ;;
+      "-h" | "--help"   )
+        show_arguments
+        print_exit
+        exit 0 ;;
+      *[a-zA-Z]*        )
+        show_arguments
+        print_exit
+        exit 1 ;;
+      *[!0-9]*          )
+        show_arguments
+        print_exit
+        exit 1 ;;
+      *                 )
+        start_script_with_build_number "$@" ;;
+  esac
+done
+
+start_script_without_build_number
