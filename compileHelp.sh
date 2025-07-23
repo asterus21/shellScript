@@ -1,6 +1,10 @@
 #!/bin/bash
 shopt -s extglob
 
+# TODO: Add a regex check for the start_script_without_build_number
+# TODO: Change the variable name, i.e. build_number for the start_script_without_build_number
+# TODO: Change the name of the start_script_without_build_number function
+
 ######### the list of the constants #########
 
 # path to the license file
@@ -45,9 +49,9 @@ show_arguments() {
   print "Add --help or -h to show this list of arguments."
   print "Add --list or -l to show a list of builds on the default Server path."
   print "Add a build number, e.g. 32534 to start the script."
-  print "Add --path or -p to change the Licence path (only absolute paths are allowed, e.g. 'C:\my_license_folder\my_license.h')."
-  print "Add --build or -b to change the Server path (only absolute paths are allowed, e.g. 'C:\my_builds_folder')."
-  print "Add --script or -s to change the path to the Main script (only absolute paths are allowed, e.g. 'C:\my_script_folder\my_script.cmd')."
+  print "Add --path or -p to change the Licence path (e.g. 'C:\my_license_folder\nodes_license.h' or C:\\my_license_folder\\nodes_license.h)."
+  print "Add --build or -b to change the Server path (e.g. 'C:\my_builds_folder' or C:\\my_builds_folder)."
+  print "Add --script or -s to change the path to the Main script (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\my_script_folder\\my_script)."
 }
 
 # function to show a list of builds
@@ -64,7 +68,7 @@ is_absolute() {
   if [[ "$1" =~ ^[a-zA-Z]:\\ ]]; then
     return 0
   else
-    print "Please, use an absolute path, e.g. C:\\my_folder"
+    print "Please, use an absolute path, e.g. C:\\my_folder or 'C:\my_folder"
     exit 1
   fi
 }
@@ -97,7 +101,7 @@ check_paths() {
   build_path="$1"
   print "The build folder path: $build_path"
 
-  if [ ! -b "$build_path" ]; then
+  if [ ! -d "$build_path" ]; then
       print "The build folder does not exist."
       print_exit
       exit 1
@@ -119,7 +123,7 @@ check_paths() {
 
   # path to the nodejs to compile the User Manual with the API specification
   node_js_path="$build_path\\Bin64\\nodejs"
-  if [ ! -b "$node_js_path" ]; then
+  if [ ! -d "$node_js_path" ]; then
       print "The NodeJS folder is not found."
       print_exit
       exit 1
