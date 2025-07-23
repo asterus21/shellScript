@@ -43,11 +43,11 @@ ask_sure() {
 show_arguments() {
   print "Here is a list of arguments:"
   print "Add --help or -h to show this list of arguments."
-  print "Add --list or -l to show a list of builds."
+  print "Add --list or -l to show a list of builds on the default Server path."
   print "Add a build number, e.g. 32534 to start the script."
-  print "Add --path or -p to change the licence path (only absolute paths are allowed, e.g. 'C:\my_license_folder\my_license.h')."
-  print "Add --build or -b to change the server path (only absolute paths are allowed, e.g. 'C:\my_build_folder\my_build')."
-  print "Add --script or -s to change the path to the main script (only absolute paths are allowed, e.g. 'C:\my_script_folder\my_script.cmd')."
+  print "Add --path or -p to change the Licence path (only absolute paths are allowed, e.g. 'C:\my_license_folder\my_license.h')."
+  print "Add --build or -b to change the Server path (only absolute paths are allowed, e.g. 'C:\my_builds_folder')."
+  print "Add --script or -s to change the path to the Main script (only absolute paths are allowed, e.g. 'C:\my_script_folder\my_script.cmd')."
 }
 
 # function to show a list of builds
