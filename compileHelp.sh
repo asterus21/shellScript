@@ -1,13 +1,9 @@
 #!/bin/bash
 shopt -s extglob
 
-# TODO: Add a regex check for the start_script_without_build_number
-# TODO: Change the variable name, i.e. build_number for the start_script_without_build_number
-# TODO: Change the name of the start_script_without_build_number function
-
 ######### the list of the constants #########
 
-# path to the license file
+# path to the License file
 declare default_path_to_license_file=D:\\pa_config\\comlicbits.h
 
 # path to the Build folder for the script
@@ -51,7 +47,7 @@ show_arguments() {
   print "Add a build number, e.g. 32534 to start the script."
   print "Add --path or -p to change the Licence path (e.g. 'C:\my_license_folder\nodes_license.h' or C:\\my_license_folder\\nodes_license.h)."
   print "Add --build or -b to change the Server path (e.g. 'C:\my_builds_folder' or C:\\my_builds_folder)."
-  print "Add --script or -s to change the path to the Main script (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\my_script_folder\\my_script)."
+  print "Add --script or -s to change the Main script path (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\my_script_folder\\my_script)."
 }
 
 # function to show a list of builds
@@ -68,7 +64,7 @@ is_absolute() {
   if [[ "$1" =~ ^[a-zA-Z]:\\ ]]; then
     return 0
   else
-    print "Please, use an absolute path, e.g. C:\\my_folder or 'C:\my_folder"
+    print "Please, use an absolute path (e.g. 'C:\my_folder' or C:\\my_folder)."
     exit 1
   fi
 }
@@ -130,8 +126,8 @@ check_paths() {
   fi
 }
 
-# function to start the script without a number
-start_script_without_build_number() {
+# function to start the script without arguments
+start_script_without_arguments() {
   print "Starting the script..."
   print "Getting a list of folders..."
   print "Note that there can be several builds in the folder."
@@ -141,9 +137,9 @@ start_script_without_build_number() {
   print "Type 'exit' to close the script."
   printf '%(%Y/%m/%d %H:%M:%S)T '
 
-  read -r build_number
+  read -r user_input
 
-  case "$build_number" in
+  case "$user_input" in
     "ext"  )
       print_exit
       exit 0 ;;
@@ -168,9 +164,13 @@ start_script_without_build_number() {
     "УЧШЕ" )
       print_exit
       exit 0 ;;
+     *[a-zA-Z]* )
+      print "Enter a valid build number."
+      print_exit
+      exit 1 ;;
   esac
 
-  build_path="${default_path_to_build}\\${build_number}"
+  build_path="${default_path_to_build}\\${user_input}"
   check_paths "$build_path"
   start_main_script
 }
@@ -255,4 +255,4 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-start_script_without_build_number
+start_script_without_arguments
