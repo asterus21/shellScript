@@ -4,13 +4,13 @@ shopt -s extglob
 ######### the list of the constants #########
 
 # path to the License file
-declare default_path_to_license_file=D:\\pa_config\\comlicbits.h
+declare default_path_to_license_file=D:\\license_file.h
 
 # path to the Build folder for the script
-declare default_path_to_build=C:\\pa6autotests\\Builds
+declare default_path_to_build=C:\\builds
 
 # path to the Main script file
-declare default_path_to_main_script=D:\\gitbash\\help\\testBuild.cmd
+declare default_path_to_main_script=D:\\help\\script.cmd
 
 ######### the functions in use #########
 
@@ -45,10 +45,10 @@ show_arguments() {
   print "Add --help or -h to show this list of arguments."
   print "Add --list or -l to show a list of builds on the default Server path."
   print "Add a build number, e.g. 32534 to start the script."
-  print "Add --path or -p to change the Licence path (e.g. 'C:\my_license_folder\nodes_license.h' or C:\\my_license_folder\\nodes_license.h)."
-  print "Add --build or -b to change the Server path (e.g. 'C:\my_builds_folder' or C:\\my_builds_folder)."
-  print "Add --script or -s to change the Main script path (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\my_script_folder\\my_script)."
-  print "Several paths flags (if needed) must be given together (./helpCompile.sh -p 'C:\my_license_folder\nodes_license.h' -b 'C:\my_builds_folder' -s 'C:\my_script_folder\my_script.cmd')."
+  print "Add --path or -p to change the Licence path (e.g. 'C:\my_license_folder\license.h' or C:\\\my_license_folder\\\license.h)."
+  print "Add --build or -b to change the Server path (e.g. 'C:\my_builds_folder' or C:\\\my_builds_folder)."
+  print "Add --script or -s to change the Main script path (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\\my_script_folder\\\my_script)."
+  print "Several paths flags (if needed) must be given together (./helpCompile.sh -p 'C:\my_license_folder\license.h' -b 'C:\my_builds_folder' -s 'C:\my_script_folder\my_script.cmd')."
 }
 
 # function to show a list of builds
@@ -65,7 +65,7 @@ is_absolute() {
   if [[ "$1" =~ ^[a-zA-Z]:\\ ]]; then
     return 0
   else
-    print "Please, use an absolute path (e.g. 'C:\my_folder' or C:\\my_folder)."
+    print "Please, use an absolute path (e.g. 'C:\my_folder' or C:\\\my_folder)."
     exit 1
   fi
 }
