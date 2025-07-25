@@ -48,6 +48,7 @@ show_arguments() {
   print "Add --path or -p to change the Licence path (e.g. 'C:\my_license_folder\nodes_license.h' or C:\\my_license_folder\\nodes_license.h)."
   print "Add --build or -b to change the Server path (e.g. 'C:\my_builds_folder' or C:\\my_builds_folder)."
   print "Add --script or -s to change the Main script path (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\my_script_folder\\my_script)."
+  print "Several paths flags (if needed) must be given together (./helpCompile.sh -p 'C:\my_license_folder\nodes_license.h' -b 'C:\my_builds_folder' -s 'C:\my_script_folder\my_script.cmd')."
 }
 
 # function to show a list of builds
@@ -164,7 +165,7 @@ start_script_without_arguments() {
     "УЧШЕ" )
       print_exit
       exit 0 ;;
-     *[a-zA-Z]* )
+    *[a-zA-Z]* )
       print "Enter a valid build number."
       print_exit
       exit 1 ;;
