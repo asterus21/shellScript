@@ -252,8 +252,11 @@ while [[ $# -gt 0 ]]; do
         print_exit
         exit 1 ;;
       *                 )
-        start_script_with_build_number "$@" ;;
+        start_script_with_build_number "$@"
+        exit 0 ;;
   esac
 done
 
-start_script_without_arguments
+else
+  start_script_without_arguments
+fi
