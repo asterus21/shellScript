@@ -204,59 +204,59 @@ start_main_script() {
 
 ######### the scripts calls #########
 
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-      "-p" | "--path"   )
-        if [ -z "$2" ]; then
-          print "Error: no path is specified"
+if [[ $# -gt 0 ]]; then
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+        "-p" | "--path"   )
+          if [ -z "$2" ]; then
+            print "Error: no path is specified"
+            print_exit
+            exit 1
+          fi
+          change_default_values "license" "$2"
+          shift 2
+          ;;
+        "-b" | "--build"  )
+          if [ -z "$2" ]; then
+            print "Error: no path is specified"
+            print_exit
+            exit 1
+          fi
+          change_default_values "build" "$2"
+          shift 2
+          ;;
+        "-s" | "--script" )
+          if [ -z "$2" ]; then
+            print "Error: no path is specified"
+            print_exit
+            exit 1
+          fi
+          change_default_values "script" "$2"
+          shift 2
+          ;;
+        "-l" | "--list"   )
+          print "Here is a list of builds:"
+          show_builds
+          print "Use --help or -h to show a list of arguments."
           print_exit
-          exit 1
-        fi
-        change_default_values "license" "$2"
-        shift 2
-        ;;
-      "-b" | "--build"  )
-        if [ -z "$2" ]; then
-          print "Error: no path is specified"
+          exit 0 ;;
+        "-h" | "--help"   )
+          show_arguments
           print_exit
-          exit 1
-        fi
-        change_default_values "build" "$2"
-        shift 2
-        ;;
-      "-s" | "--script" )
-        if [ -z "$2" ]; then
-          print "Error: no path is specified"
+          exit 0 ;;
+        *[a-zA-Z]*        )
+          show_arguments
           print_exit
-          exit 1
-        fi
-        change_default_values "script" "$2"
-        shift 2
-        ;;
-      "-l" | "--list"   )
-        print "Here is a list of builds:"
-        show_builds
-        print "Use --help or -h to show a list of arguments."
-        print_exit
-        exit 0 ;;
-      "-h" | "--help"   )
-        show_arguments
-        print_exit
-        exit 0 ;;
-      *[a-zA-Z]*        )
-        show_arguments
-        print_exit
-        exit 1 ;;
-      *[!0-9]*          )
-        show_arguments
-        print_exit
-        exit 1 ;;
-      *                 )
-        start_script_with_build_number "$@"
-        exit 0 ;;
-  esac
-done
-
+          exit 1 ;;
+        *[!0-9]*          )
+          show_arguments
+          print_exit
+          exit 1 ;;
+        *                 )
+          start_script_with_build_number "$@"
+          exit 0 ;;
+    esac
+  done
 else
   start_script_without_arguments
 fi
