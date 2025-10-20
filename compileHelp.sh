@@ -165,6 +165,10 @@ start_script_without_arguments() {
     "УЧШЕ" )
       print_exit
       exit 0 ;;
+    "" )
+      print "Enter a valid build number."
+      print_exit
+      exit 1 ;;
     *[a-zA-Z]* )
       print "Enter a valid build number."
       print_exit
@@ -246,6 +250,7 @@ if [[ $# -gt 0 ]]; then
           exit 0 ;;
         *[a-zA-Z]*        )
           show_arguments
+          print "Enter a valid build number."
           print_exit
           exit 1 ;;
         *[!0-9]*          )
