@@ -3,14 +3,15 @@ shopt -s extglob
 
 ######### the list of the constants #########
 
-# path to the License file
-declare default_path_to_license_file=D:\\license_file.h
+# path to the License file (comlicbits.h)
+declare default_path_to_license_file=D:\\pa_config\\comlicbits.h
 
-# path to the Build folder for the script
-declare default_path_to_build=C:\\builds
+# path to the Build folder for the script (PA6.5 root folder)
+declare default_path_to_build=D:\\gitbash\\pa6autotests\\Builds
 
-# path to the Main script file
-declare default_path_to_main_script=D:\\help\\script.cmd
+# path to the Main script file (PA6.5 Help repository folder)
+# testBuild.cmd is used to avoid the PDF files export
+declare default_path_to_main_script=D:\\gitbash\\help\\testBuild.cmd
 
 ######### the functions in use #########
 
@@ -45,10 +46,10 @@ show_arguments() {
   print "Add --help or -h to show this list of arguments."
   print "Add --list or -l to show a list of builds on the default Server path."
   print "Add a build number, e.g. 32534 to start the script."
-  print "Add --path or -p to change the Licence path (e.g. 'C:\my_license_folder\license.h' or C:\\\my_license_folder\\\license.h)."
-  print "Add --build or -b to change the Server path (e.g. 'C:\my_builds_folder' or C:\\\my_builds_folder)."
-  print "Add --script or -s to change the Main script path (e.g. 'C:\my_script_folder\my_script.cmd' or C:\\\my_script_folder\\\my_script)."
-  print "Several paths flags (if needed) must be given together (./helpCompile.sh -p 'C:\my_license_folder\license.h' -b 'C:\my_builds_folder' -s 'C:\my_script_folder\my_script.cmd')."
+  print "Add --path or -p to change the Licence path (e.g. 'C:/my_license_folder/comlicbits.h' or C:\\\my_license_folder\\\comlicbits.h)."
+  print "Add --build or -b to change the Server path (e.g. 'C:/my_builds_folder' or C:\\\my_builds_folder)."
+  print "Add --script or -s to change the Main script path (e.g. 'C:/my_script_folder/build.cmd' or C:\\\my_script_folder\\\build.cmd)."
+  print "Several paths flags (if needed) must be given together (./helpCompile.sh -p 'C:/my_license_folder/comlicbits.h' -b 'C:/my_builds_folder' -s 'C:/my_script_folder/build.cmd')".
 }
 
 # function to show a list of builds
@@ -62,10 +63,10 @@ show_builds() {
 
 # function to check whether a path is absolute
 is_absolute() {
-  if [[ "$1" =~ ^[a-zA-Z]:\\ ]]; then
+  if [[ "$1" =~ ^[a-zA-Z]:\\/ ]]; then
     return 0
   else
-    print "Please, use an absolute path (e.g. 'C:\my_folder' or C:\\\my_folder)."
+    print "Please, use an absolute path (e.g. 'C:/my_folder' or C:\\\my_folder)."
     exit 1
   fi
 }
@@ -74,21 +75,109 @@ is_absolute() {
 change_default_values() {
   local path_to_change=$1
   local new_path=$2
-
-  is_absolute "$new_path"
-
   case "$path_to_change" in
     "license" )
       default_path_to_license_file="$new_path"
       print "License path changed to $new_path"
+      print "The list of the builds in the folder is given below:"
+      show_builds
+      print "Type a build number to process, e.g. 30251."
+      print "Type 'exit' to close the script."
+      printf '%(%Y/%m/%d %H:%M:%S)T '
+      read -r user_input
+      case "$user_input" in
+        "ext"  )
+          print_exit
+          exit 0 ;;
+        "exit" )
+          print_exit
+          exit 0 ;;
+        "Exit" )
+          print_exit
+          exit 0 ;;
+        "EXIT" )
+          print_exit
+          exit 0 ;;
+        "учш"  )
+          print_exit
+          exit 0 ;;
+        "учше" )
+          print_exit
+          exit 0 ;;
+        "Учше" )
+          print_exit
+          exit 0 ;;
+        "УЧШЕ" )
+          print_exit
+          exit 0 ;;
+        "" )
+          print "Enter a valid build number."
+          print_exit
+          exit 1 ;;
+        *[a-zA-Z]* )
+          print "Enter a valid build number."
+          print_exit
+          exit 1 ;;
+      esac
+
+      build_path="${default_path_to_build}\\${user_input}"
+      check_paths "$build_path"
+      start_main_script
       ;;
     "build"   )
+      # is_absolute "$new_path"
       default_path_to_build="$new_path"
       print "Build path changed to $new_path"
+      build_path="${default_path_to_build}"
+      check_paths "$build_path"
+      start_main_script
       ;;
     "script"  )
       default_path_to_main_script="$new_path"
       print "Script path changed to $new_path"
+      print "The list of the builds in the folder is given below:"
+      show_builds
+      print "Type a build number to process, e.g. 30251."
+      print "Type 'exit' to close the script."
+      printf '%(%Y/%m/%d %H:%M:%S)T '
+      read -r user_input
+      case "$user_input" in
+        "ext"  )
+          print_exit
+          exit 0 ;;
+        "exit" )
+          print_exit
+          exit 0 ;;
+        "Exit" )
+          print_exit
+          exit 0 ;;
+        "EXIT" )
+          print_exit
+          exit 0 ;;
+        "учш"  )
+          print_exit
+          exit 0 ;;
+        "учше" )
+          print_exit
+          exit 0 ;;
+        "Учше" )
+          print_exit
+          exit 0 ;;
+        "УЧШЕ" )
+          print_exit
+          exit 0 ;;
+        "" )
+          print "Enter a valid build number."
+          print_exit
+          exit 1 ;;
+        *[a-zA-Z]* )
+          print "Enter a valid build number."
+          print_exit
+          exit 1 ;;
+      esac
+      build_path="${default_path_to_build}\\${user_input}"
+      check_paths "$build_path"
+      start_main_script
       ;;
   esac
 }
@@ -191,7 +280,7 @@ start_script_with_build_number() {
 
 # function to start the main script
 start_main_script() {
-  # PDF files are not copied, that's why we need to cut them before the script starts and insert afterwards
+  # PDF files are not copied even with the use of testBuild.cmd, that's why we need to cut them before the script starts and insert afterwards
   mv "$build_path\\SourceData\\www\\help\\pdf" "$build_path\\SourceData\\www"
 
   # export of the environmental variables
@@ -199,6 +288,15 @@ start_main_script() {
   export COMLICBITSPATH=${default_path_to_license_file}
   export MISHARED=${node_js_path}
 
+  license_path=$(realpath "${default_path_to_license_file}")
+  path_to_build=$(realpath "${build_path}")
+  main_script_path=$(realpath "${default_path_to_main_script}")
+
+  print "Path to the license file: $license_path"
+  print "Path to a build folder: $path_to_build"
+  print "Path to the main script: $main_script_path"
+
+  echo
   # the main script call
   $default_path_to_main_script
 
@@ -258,7 +356,7 @@ if [[ $# -gt 0 ]]; then
           print_exit
           exit 1 ;;
         *                 )
-          start_script_with_build_number "$@"
+          start_script_with_build_number "$1"
           exit 0 ;;
     esac
   done
